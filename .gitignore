@@ -46,3 +46,5 @@ supervisord.pid
 **whoosh_index/
 .DS_Store
 apps/.DS_Store
+.pytest_cache
+*.db

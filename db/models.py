@@ -1,34 +1,23 @@
-from pydantic import BaseModel
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+from db.database import Base
 
 
+class Project(Base):
+    __tablename__ = "projects"
 
-class Project(BaseModel):
-    id: int | None
-    title: str
-    color: str | None = None
-
-
-# class Label(BaseModel):
-#     id: int | None
-#     title: str
-#     color: str
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    color = Column(String)
+    is_active = Column(Boolean, default=True)
+    tasks = relationship("Task", back_populates="project")
 
 
-class Task(BaseModel):
-    id: int | None
-    title: str
-    description: str
-    project: Project = None
-    # labels: list[Label] = None
-    is_checked: bool = False
-    deadline: str | None = None  # TODO datetime
-
-
-# class Subtask(BaseModel):
-#     id: int | None
-#     title: str
-#     description: str
-#     task: Task
-#     is_checked: bool = False
-#     labels: list[Label] = None
-#     deadline: str | None = None  # TODO datetime
+class Task(Base):
+    __tablename__ = "tasks"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    is_checked = Column(Boolean, default=False)
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    project = relationship("Project", back_populates="tasks")
