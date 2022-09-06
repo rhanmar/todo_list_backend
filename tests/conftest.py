@@ -1,14 +1,13 @@
+import factory
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import pytest
 
 from db.database import Base
-from main import app
-from dependencies import get_db
-import factory
 from db.models import Project, Task
-
+from dependencies import get_db
+from main import app
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 

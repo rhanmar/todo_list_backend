@@ -1,5 +1,6 @@
-from db.models import Project
 import pytest
+
+from db.models import Project
 
 
 @pytest.mark.projects
@@ -15,7 +16,9 @@ def test_projects_list(test_db, client, db_session, project_factory, url_project
 
 
 @pytest.mark.projects
-def test_project_detail(test_db, client, db_session, project_factory, url_projects_detail):
+def test_project_detail(
+    test_db, client, db_session, project_factory, url_projects_detail
+):
 
     item = project_factory()
     db_session.commit()
@@ -27,14 +30,20 @@ def test_project_detail(test_db, client, db_session, project_factory, url_projec
     assert response_json["title"] == item.title
     assert response_json["color"] == item.color
 
+
 # https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
 # https://dev.to/jbrocher/fastapi-testing-a-database-5ao5
 
 
 @pytest.mark.projects
-def test_create_project(test_db, client, db_session, url_projects_list, url_projects_detail):
+def test_create_project(
+    test_db, client, db_session, url_projects_list, url_projects_detail
+):
 
-    response = client.post(url_projects_list, json={"title": "Test title", "color": "blue", "is_active": False})
+    response = client.post(
+        url_projects_list,
+        json={"title": "Test title", "color": "blue", "is_active": False},
+    )
     assert response.status_code == 201
     assert len(db_session.query(Project).all()) == 1
 
@@ -56,16 +65,21 @@ def test_create_project(test_db, client, db_session, url_projects_list, url_proj
 
 
 @pytest.mark.projects
-def test_delete_project(test_db, client, db_session, url_projects_list, url_projects_detail):
+def test_delete_project(
+    test_db, client, db_session, url_projects_list, url_projects_detail
+):
 
-    response = client.post(url_projects_list, json={"title": "Test title", "color": "blue", "is_active": False})
+    response = client.post(
+        url_projects_list,
+        json={"title": "Test title", "color": "blue", "is_active": False},
+    )
     assert response.status_code == 201
 
     items = db_session.query(Project).all()
     assert len(items) == 1
 
     response_json = response.json()
-    response = client.delete(url_projects_detail.format(response_json['id']))
+    response = client.delete(url_projects_detail.format(response_json["id"]))
     assert response.status_code == 201
 
     response = client.get(url_projects_list)
@@ -78,14 +92,22 @@ def test_delete_project(test_db, client, db_session, url_projects_list, url_proj
 
 
 @pytest.mark.projects
-def test_change_project(test_db, client, db_session, url_projects_list, url_projects_detail):
+def test_change_project(
+    test_db, client, db_session, url_projects_list, url_projects_detail
+):
 
-    response = client.post(url_projects_list, json={"title": "Test title", "color": "blue", "is_active": False})
+    response = client.post(
+        url_projects_list,
+        json={"title": "Test title", "color": "blue", "is_active": False},
+    )
     assert response.status_code == 201
     assert len(db_session.query(Project).all()) == 1
 
     item = db_session.query(Project).all()[0]
-    response = client.put(url_projects_detail.format(item.id), json={"title": "Brand new title", "is_active": True})
+    response = client.put(
+        url_projects_detail.format(item.id),
+        json={"title": "Brand new title", "is_active": True},
+    )
     assert response.status_code == 201
     db_session.refresh(item)
     assert item.title == "Brand new title"

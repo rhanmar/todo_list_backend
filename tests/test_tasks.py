@@ -1,10 +1,18 @@
-from db.models import Task
 import pytest
 from fastapi import status
 
+from db.models import Task
+
 
 @pytest.mark.tasks
-def test_tasks_list(test_db, client, db_session, task_with_project_factory, project_factory, url_tasks_list):
+def test_tasks_list(
+    test_db,
+    client,
+    db_session,
+    task_with_project_factory,
+    project_factory,
+    url_tasks_list,
+):
 
     project = project_factory()
     db_session.commit()
@@ -24,7 +32,9 @@ def test_tasks_list(test_db, client, db_session, task_with_project_factory, proj
 
 
 @pytest.mark.tasks
-def test_tasks_detail(test_db, client, db_session, task_with_project_factory, url_tasks_detail):
+def test_tasks_detail(
+    test_db, client, db_session, task_with_project_factory, url_tasks_detail
+):
 
     task = task_with_project_factory()
     db_session.commit()
@@ -39,12 +49,21 @@ def test_tasks_detail(test_db, client, db_session, task_with_project_factory, ur
 
 
 @pytest.mark.tasks
-def test_tasks_create(test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail):
+def test_tasks_create(
+    test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail
+):
 
     project = project_factory()
     db_session.commit()
 
-    response = client.post(url_tasks_list, json={"title": "Test task title 1", "project_id": project.id, "description": "description 1"})
+    response = client.post(
+        url_tasks_list,
+        json={
+            "title": "Test task title 1",
+            "project_id": project.id,
+            "description": "description 1",
+        },
+    )
     assert response.status_code == status.HTTP_201_CREATED
     assert db_session.query(Task).count() == 1
 
@@ -69,11 +88,14 @@ def test_tasks_create(test_db, client, db_session, project_factory, url_tasks_li
 @pytest.mark.tasks
 def test_tasks_delete(test_db, client, db_session, url_tasks_list, url_tasks_detail):
 
-    response = client.post(url_tasks_list, json={"title": "Test task title 1", "description": "description 1"})
+    response = client.post(
+        url_tasks_list,
+        json={"title": "Test task title 1", "description": "description 1"},
+    )
     response_json = response.json()
     assert response.status_code == status.HTTP_201_CREATED
 
-    response = client.delete(url_tasks_detail.format(response_json['id']))
+    response = client.delete(url_tasks_detail.format(response_json["id"]))
     assert response.status_code == status.HTTP_201_CREATED
 
     response = client.get(url_tasks_list)
@@ -85,8 +107,13 @@ def test_tasks_delete(test_db, client, db_session, url_tasks_list, url_tasks_det
 
 
 @pytest.mark.tasks
-def test_tasks_change(test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail):
-    response = client.post(url_tasks_list, json={"title": "Test task title 1", "description": "description 1"})
+def test_tasks_change(
+    test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail
+):
+    response = client.post(
+        url_tasks_list,
+        json={"title": "Test task title 1", "description": "description 1"},
+    )
     assert response.status_code == status.HTTP_201_CREATED
 
     task_db = db_session.query(Task).all()[0]
@@ -95,7 +122,10 @@ def test_tasks_change(test_db, client, db_session, project_factory, url_tasks_li
     project = project_factory()
     db_session.commit()
 
-    response = client.put(url_tasks_detail.format(task_db.id), json={"title": "new title", "project_id": project.id})
+    response = client.put(
+        url_tasks_detail.format(task_db.id),
+        json={"title": "new title", "project_id": project.id},
+    )
     assert response.status_code == status.HTTP_201_CREATED
     db_session.refresh(task_db)
     assert task_db.title == "new title"
