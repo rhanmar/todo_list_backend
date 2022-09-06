@@ -1,4 +1,4 @@
-from db.models import Task, Project
+from db.models import Task
 import pytest
 from fastapi import status
 

@@ -4,7 +4,10 @@ from sqlalchemy.orm import sessionmaker
 import pytest
 
 from db.database import Base
-from main import app, get_db
+from main import app
+from dependencies import get_db
+import factory
+from db.models import Project, Task
 
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -67,11 +70,6 @@ def url_tasks_detail():
     return "api/tasks/{}/"
 
 
-
-import factory
-from db.models import Project, Task
-
-
 @pytest.fixture()
 def project_factory(db_session):
     class ProjectFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -99,58 +97,3 @@ def task_with_project_factory(db_session, project_factory):
             sqlalchemy_session = db_session
 
     return TaskWithProjectFactory
-
-
-
-# Base.metadata.drop_all(bind=engine)
-# Base.metadata.create_all(bind=engine)
-# @pytest.fixture()
-# def db_create_drop():
-#     Base.metadata.create_all(bind=engine)
-#     yield
-#     Base.metadata.drop_all(bind=engine)
-
-
-
-# @pytest.fixture()
-# def session():
-#     connection = engine.connect()
-#     transaction = connection.begin()
-#     session = TestingSessionLocal(bind=connection)
-#
-#     # Begin a nested transaction (using SAVEPOINT).
-#     nested = connection.begin_nested()
-#     session.close()
-#     transaction.rollback()
-#     connection.close()
-
-
-
-
-
-# @pytest.fixture()
-# def client():
-#     def override_get_db():
-#         db = TestingSessionLocal()
-#         try:
-#             yield db
-#         finally:
-#             db.close()
-#
-#     app.dependency_overrides[get_db] = override_get_db
-#     yield TestClient(app)
-
-
-
-# client = TestClient(app)
-
-
-
-# @pytest.fixture()
-# def client(session):
-#     def override_get_db():
-#         yield session
-#
-#     app.dependency_overrides[get_db] = override_get_db
-#     yield TestClient(app)
-#     # del app.dependency_overrides[get_db]
