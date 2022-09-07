@@ -1,4 +1,5 @@
 import pytest
+from fastapi import status
 
 from db.models import Project
 
@@ -33,6 +34,12 @@ def test_project_detail(
 
 # https://stackoverflow.com/questions/67255653/how-to-set-up-and-tear-down-a-database-between-tests-in-fastapi
 # https://dev.to/jbrocher/fastapi-testing-a-database-5ao5
+
+
+@pytest.mark.projects
+def test_project_detail_error(test_db, client, db_session, url_projects_detail):
+    response = client.get(url_projects_detail.format(0))
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.projects
@@ -92,6 +99,14 @@ def test_delete_project(
 
 
 @pytest.mark.projects
+def test_delete_project_error(
+    test_db, client, db_session, url_projects_list, url_projects_detail
+):
+    response = client.delete(url_projects_detail.format(0))
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.projects
 def test_change_project(
     test_db, client, db_session, url_projects_list, url_projects_detail
 ):
@@ -113,3 +128,14 @@ def test_change_project(
     assert item.title == "Brand new title"
     assert item.is_active is True
     assert item.color == "blue"
+
+
+@pytest.mark.projects
+def test_change_project_error(
+    test_db, client, db_session, url_projects_list, url_projects_detail
+):
+    response = client.put(
+        url_projects_detail.format(0),
+        json={"title": "Brand new title", "is_active": True},
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
