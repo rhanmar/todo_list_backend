@@ -49,6 +49,12 @@ def test_tasks_detail(
 
 
 @pytest.mark.tasks
+def test_tasks_detail_error(test_db, client, db_session, url_tasks_detail):
+    response = client.get(url_tasks_detail.format(0))
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.tasks
 def test_tasks_create(
     test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail
 ):
@@ -107,6 +113,12 @@ def test_tasks_delete(test_db, client, db_session, url_tasks_list, url_tasks_det
 
 
 @pytest.mark.tasks
+def test_tasks_delete_error(test_db, client, db_session, url_tasks_detail):
+    response = client.delete(url_tasks_detail.format(0))
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.tasks
 def test_tasks_change(
     test_db, client, db_session, project_factory, url_tasks_list, url_tasks_detail
 ):
@@ -130,3 +142,12 @@ def test_tasks_change(
     db_session.refresh(task_db)
     assert task_db.title == "new title"
     assert task_db.project_id == project.id
+
+
+@pytest.mark.tasks
+def test_tasks_change_error(test_db, client, db_session, url_tasks_detail):
+    response = client.put(
+        url_tasks_detail.format(0),
+        json={"title": "new title", "project_id": 0},
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
