@@ -1,0 +1,43 @@
+body {
+    font-family: sans-serif;
+    font-size: 20px;
+}
+
+.container {
+    border: 1px solid black;
+    width: 30%;
+    margin: 0 auto;
+    /*text-align: center;*/
+}
+
+.taskFooter {
+    text-align: left;
+    margin: 0.3rem;
+}
+
+.taskDate, .taskProjectName {
+    display: inline;
+    font-size: 14px;
+}
+
+.taskDate {
+    color: grey;
+}
+
+.taskProjectName {
+    color: purple;
+}
+
+.taskTitle {
+    margin: 1rem;
+}
+
+/*.taskCheckbox {*/
+/*    cursor: pointer;*/
+/*    border-radius: 50%;*/
+/*}*/
+
+/*.taskProjectName {*/
+/*    font-size: 14px;*/
+/*    text-align: ;*/
+/*}*/
